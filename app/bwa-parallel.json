@@ -85,7 +85,7 @@
       "value": {
       	"visible": true,
         "required": true,
-        "default": mem
+        "default": "mem"
       },
       "semantics": {
         "ontology": []
@@ -108,7 +108,7 @@
       "semantics": {
         "ontology": []
       }
-    }
+    },
     {
       "id": "reference",
       "details": {
@@ -118,7 +118,7 @@
         "showArgument": false
       },
       "value": {
-        "default": hg_19.fa,
+        "default": "hg_19.fa",
         "required": true,
         "visible": true
       },
