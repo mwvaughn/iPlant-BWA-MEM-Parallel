@@ -1,0 +1,130 @@
+{
+  "name": "BWA-parallel",
+  "version": "0.1.0",
+  "helpURI": "https://github.com/edawson/BWA-parallel",
+  "label": "BWA-parallel",
+  "defaultNodeCount": 1,
+  "defaultRequestedTime": "05:00:00",
+  "shortDescription": "Maps FASTA/FASTQ reads to a reference sequence.",
+  "longDescription": "A parallel wrapper for BWA, a short-read FASTA/FASTQ aligner.",
+  "executionSystem": "dooley-rodeo-docker1",
+  "executionType": "CLI",
+  "parallelism": "PARALLEL",
+  "checkpointable": false,
+  "deploymentPath": "/ericco92/applications/BWA-parallel/stampede",
+  "templatePath": "bwa-parallel.sh",
+  "testPath": "test/test.sh",
+  "tags": [
+    "next-gen", "bwa", "fasta", "aligner"
+  ],
+  "modules": [],
+  "inputs": [
+    {
+      "id": "infile",
+      "details": {
+      	"label": "FASTQ/FASTQ Input File",
+        "description": "Input file to split.",
+        "argument": null,
+        "showArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "ontology": []
+      },
+      "value": {
+        "required": true,
+        "visible": true
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "unpackInputs",
+      "details": {
+        "label": "Unpack input files",
+        "description": "If true, any compressed input files will be expanded prior to execution on the remote system.",
+        "argument": "1",
+        "showArgument": true
+      },
+      "value": {
+        "default": "true",
+        "type": "flag",
+        "visible": true,
+        "required": false
+      },
+      "semantics": {
+        "ontology": []
+      }
+    },
+    {
+      "id": "slices",
+      "details": {
+        "label": "Number of slices",
+        "description": "The number of intermediate files to split the infile into.",
+        "argument": "-split ",
+        "showArgument": true
+      },
+      "value": {
+      	"visible": true,
+        "required": true,
+        "type": "number",
+        "default": 5
+      },
+      "semantics": {
+        "ontology": []
+      }
+    },
+    {
+      "id": "algorithm",
+      "details": {
+        "label": "BWA Algorithm",
+        "description": "The BWA method to use.",
+        "argument": null,
+        "showArgument": false
+      },
+      "value": {
+      	"visible": true,
+        "required": true,
+        "default": mem
+      },
+      "semantics": {
+        "ontology": []
+      }
+    },
+    {
+      "id": "records",
+      "details": {
+        "label": "Max records per slice",
+        "description": "The maximum number of records to put in an intermediate file.",
+        "argument": "-records ",
+        "showArgument": true
+      },
+      "value": {
+        "default": 1000,
+        "type": "number",
+        "required": false,
+        "visible": true
+      },
+      "semantics": {
+        "ontology": []
+      }
+    }
+    {
+      "id": "reference",
+      "details": {
+        "label": "Reference Genome",
+        "description": "The reference genome to align to in fasta format.",
+        "argument": null,
+        "showArgument": false
+      },
+      "value": {
+        "default": hg_19.fa,
+        "required": true,
+        "visible": true
+      },
+      "semantics": {
+        "ontology": []
+      }
+    }
+  ]
+}
