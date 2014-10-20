@@ -1,22 +1,26 @@
 #!/bin/bash
 
-# File to split
+## File to split
 INFILE="${infile}"
 
-# Outfile basename
+## Basename of the outfile.
 OUTFILE="${OUTPUT}"
 
 
-# Number of slices
+## Number of slices
 SLICES="${slices}"
 
-# Max number of records per slice
+## Max number of records per slice
 RECORDS="${records}"
 
 ## BWA Algorithm to use for analysis
 ALG="${ALG}"
 
+## Reference genome for alignment
 BWAINDEX="${BWAINDEX}"
+
+## The number of threads to use for each BWA process
+THREADS=4
 
 ## Split the input file into smaller files
 python split.py -i ${INFILE} -r ${RECORDS}
@@ -32,7 +36,7 @@ fi
 
 for i in `ls | grep ".*split_[0-9]*.*"`
 do
-    echo "bwa mem -t 4 ${BWAINDEX} ${i} >> bwa_output_${1}.sam" >> commandfile.txt
+    echo "bwa ${ALG} -t ${THREADS} ${BWAINDEX} ${i} >> bwa_output_${i}.sam" >> commandfile.txt
 done
 
 python launcher.py -i commandfile -c 4
