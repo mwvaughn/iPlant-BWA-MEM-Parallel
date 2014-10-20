@@ -6,7 +6,6 @@ INFILE="${infile}"
 ## Basename of the outfile.
 OUTFILE="${OUTPUT}"
 
-
 ## Number of slices
 SLICES="${slices}"
 
@@ -30,6 +29,7 @@ python split.py -i ${INFILE} -r ${RECORDS}
 ## Use four cores per BWA thread. BWA scales relatively
 ## poorly beyond 4 threads, at which point it is better to simply
 ## split the input file into more intermediate files.
+## First, remove and previous commandfiles.
 if [ -e commandfile.txt ]
     then rm commandfile.txt
 fi
@@ -42,7 +42,17 @@ done
 python launcher.py -i commandfile -c 4
 
 ## Splice the output back together
-python splice.py -o ${OUTFILE}
+head -n 120000 temp/split_0.fq >> ${OUTFILE}
 
-rm *split_*
+for i in temp/*.sam
+do
+    cat ${i} | grep -v "^@" >> ${OUTFILE}
+done
+
+## python splice.py -o ${OUTFILE}
+
+
+## Clean up all the mess we brought with us so it doesn't
+## get pushed back.
+rm -rf temp
 rm -rf bin

@@ -39,6 +39,7 @@ def process_fasta_by_splits(filename, isFastq, num_splits):
     """Splits a given file into <num_splits> files. May be slow on
     systems with limited I/O performance"""
     split_number = -1
+    os.mkdir("./temp")
     basename = os.path.basename(filename)
     extension = basename.split(".")[-1]
     iden = "@" if isFastq else ">"
@@ -51,7 +52,8 @@ def process_fasta_by_splits(filename, isFastq, num_splits):
                 if split_number >= num_splits:
                     split_number = 0
                 record_count += 1
-            cname = "".join(basename.split(".")[:-1]) + "_split_" + str(split_number) + "." + extension
+            #  "".join(basename.split(".")[:-1]) +
+            cname = "./temp" + "_split_" + str(split_number) + "." + extension
             with open(cname, "a") as outfile:
                 outfile.write(line)
     return record_count
@@ -69,6 +71,7 @@ def process_fasta(filename, isFastq, num_records=1000):
     # os.mkdir(tmp_dir)
     iden = "@" if isFastq else ">"
     original_records_count = 0
+    os.mkdir("./temp")
     with open(filename, "r") as infile:
         count = 0
         for line in infile:
@@ -76,7 +79,8 @@ def process_fasta(filename, isFastq, num_records=1000):
             if is_new:
                 count += 1
             if count >= num_records:
-                cname = "".join(basename.split(".")[:-1]) + "_split_" + str(split_number) + "." + extension
+                ## + "".join(basename.split(".")[:-1])
+                cname = "temp/" + "split_" + str(split_number) + "." + extension
                 with open(cname, "w") as outfile:
                     for record in records:
                         outfile.write(record)

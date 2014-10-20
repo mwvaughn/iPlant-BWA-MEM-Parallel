@@ -35,6 +35,22 @@
         "required": true,
         "visible": true
       }
+    },
+    {
+      "id": "reference",
+      "details": {
+        "label": "Reference Genome",
+        "description": "The reference genome to align to in fasta format.",
+        "argument": null,
+        "showArgument": false
+      },
+      "value": {
+        "required": true,
+        "visible": true
+      },
+      "semantics": {
+        "ontology": []
+      }
     }
   ],
   "parameters": [
@@ -109,22 +125,5 @@
         "ontology": []
       }
     },
-    {
-      "id": "reference",
-      "details": {
-        "label": "Reference Genome",
-        "description": "The reference genome to align to in fasta format.",
-        "argument": null,
-        "showArgument": false
-      },
-      "value": {
-        "default": "hg_19.fa",
-        "required": true,
-        "visible": true
-      },
-      "semantics": {
-        "ontology": []
-      }
-    }
   ]
 }
