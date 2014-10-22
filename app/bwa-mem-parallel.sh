@@ -1,7 +1,12 @@
 #!/bin/bash
 
+tar xzf bin.tgz
+PATH=$PATH:`pwd`/bin
 ## File to split
 INFILE="${infile}"
+
+## File containing read mates
+MATES="${MATES}"
 
 ## Basename of the outfile.
 OUTFILE="${OUTPUT}"
@@ -35,7 +40,7 @@ if [ -n "${zDropoff}" ]; then ARGS="${ARGS} -d ${zDropoff}"; fi
 if [ -n "${reSeedFactor}" ]; then ARGS="${ARGS} -r ${reSeedFactor}"; fi
 
 if [ -n "${trimDupsThreshold}" ]; then ARGS="${ARGS} -c ${trimDupsThreshold}"; fi
-if [ -n "${isPairedEnd}" ]; then ARGS="${ARGS} -P"; fi
+if [ -n "${interleavedPairedEnd}" ]; then ARGS="${ARGS} -P"; fi
 if [ -n "${readGroupHeader}" ]; then ARGS="${ARGS} -R ${readGroupHeader}"; fi
 if [ -n "${alignmentScoreThreshold}" ]; then ARGS="${ARGS} -T ${alignmentScoreThreshold}"; fi
 if [ -n "${outputAllAlignments}" ]; then ARGS="${ARGS} -a"; fi
@@ -43,6 +48,7 @@ if [ -n "${appendFastaComments}" ]; then ARGS="${ARGS} -C"; fi
 if [ -n "${hardClipping}" ]; then ARGS="${ARGS} -H"; fi
 if [ -n "${markSecondaries}" ]; then ARGS="${ARGS} -M"; fi
 if [ -n "${verbose}" ]; then ARGS="${ARGS} -v ${verbose}"; fi
+
 
 ## Run BWA on the splits using PyLauncher
 ## Use four cores per BWA thread. BWA scales relatively
@@ -55,7 +61,7 @@ fi
 
 for i in `ls | grep ".*split_[0-9]*.*"`
 do
-    echo "bwa ${ARGS} >> bwa_output_${i}.sam" >> commandfile.txt
+    echo "bwa ${ARGS} ${BWAINDEX} ${INFILE} ${MATES} >> bwa_output_${i}.sam" >> commandfile.txt
 done
 
 python launcher.py -i commandfile -c 4
