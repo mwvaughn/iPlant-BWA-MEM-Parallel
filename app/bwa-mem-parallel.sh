@@ -27,12 +27,12 @@ BWAINDEX="${BWAINDEX}"
 THREADS=4
 
 ## Split the input file into smaller files
-python split.py -i ${INFILE} -r ${RECORDS}
+python ./bin/split.py -i ${INFILE} -r ${RECORDS}
 
 
 
 ## Build up the ARGS string to pass to BWA based on user input
-ARGS="mem -t 4"
+ARGS=""
 
 if [ -n "${minSeedLength}" ]; then ARGS="${ARGS} -k ${qualityForTrimming}"; fi
 if [ -n "${bandWidth}" ]; then ARGS="${ARGS} -w ${bandWidth}"; fi
@@ -59,20 +59,21 @@ if [ -e commandfile.txt ]
     then rm commandfile.txt
 fi
 
-for i in `ls | grep ".*split_[0-9]*.*"`
+for i in `ls | grep "[0-9]**"`
 do
-    echo "bwa ${ARGS} ${BWAINDEX} ${INFILE} ${MATES} >> bwa_output_${i}.sam" >> commandfile.txt
+    echo "bwa mem -t 4 ${ARGS} ${INDEX} ./temp/${i} ${MATES} | samtools view -S -b -u - | samtools sort -o -m 4G -@ 4 - - >> ./temp/split_sorted_`echo ${i} | grep -o [0-9]*`.bam" >> commandfile.txt
 done
 
-python launcher.py -i commandfile -c 4
+python ./bin/launcher.py -i commandfile -c 4
 
 ## Splice the output back together
-head -n 120000 temp/split_0.fq >> ${OUTFILE}
-
-for i in temp/*.sam
+INTERMEDIATES=""
+for i in `ls ./temp/ | grep "split_sorted"`
 do
-    cat ${i} | grep -v "^@" >> ${OUTFILE}
+    INTERMEDIATES="${INTERMEDIATES} ./temp/${i}"
 done
+
+samtools merge -f $OUTFILE $INTERMEDIATES
 
 ## python splice.py -o ${OUTFILE}
 
