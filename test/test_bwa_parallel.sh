@@ -6,40 +6,51 @@
 #SBATCH -J test-BWA
 #SBATCH -o test-BWA-index.o%j
 
+module load python
 module load pylauncher
+module unload samtools
+module unload bwa
+
 
 cd ..
 
 ##./build.sh
 tar xzf bin.tgz
 
+##Fix the path so that it contains the bin directory
+PATH=$PATH:`pwd`/bin
+
 ## Input (a fastq file)
 INFILE=$WORK/sandbox/ecoli_mda_lane1.fastq
-INDEX=${WORK}/sandbox/U00096.2.fas
+INDEX=${WORK}/sandbox/e_coli_idx
+OUTFILE="e_coli_test.bam"
+
 #Split it all up: 100K records per file
 echo "Time to split file into files of 100K records a piece"
-time python split.py -i ${INFILE} -r 100000
+time python ./bin/split.py -i ${INFILE} -r 100000
 
 ## Algorithm (we'll start with mem, but others may be appropriate)
 if [ -e commandfile.txt ]
     then rm commandfile.txt
 fi
 
-for i in `ls | grep ".*split_[0-9]*.*"`
+
+
+for i in `ls ./temp | grep "[0-9]*"`
 do
-    echo "bwa ${ARGS} ${BWAINDEX} ${INFILE} ${MATES} >> bwa_output_${i}.sam" >> commandfile.txt
+# ~/bioinformatica/bwa-0.7.10/bwa mem -t 2 bwa_index_hg19 test.fa | samtools view -S -b -u -| samtools sort -o -m 4G -@ 2 - - >> out.bam
+    echo "bwa mem -t 4 ${ARGS} ${INDEX} ./temp/${i} ${MATES} | samtools view -S -b -u - | samtools sort -o -m 4G -@ 4 - - >> ./temp/split_sorted_`echo ${i} | grep -o [0-9]*`.bam" >> commandfile.txt
 done
 
-python launcher.py -i commandfile -c 4
+python ./bin/launcher.py -i commandfile.txt -c 4
 
-
-head -n 120000 temp/split_0.fq >> ${OUTFILE}
-
-for i in temp/*.sam
+INTERMEDIATES=""
+for i in `ls ./temp/ | grep "split_sorted"`
 do
-    cat ${i} | grep -v "^@" >> ${OUTFILE}
+    INTERMEDIATES="${INTERMEDIATES} ./temp/${i}"
 done
 
+samtools merge -f $OUTFILE ${INTERMEDIATES}
 
 rm -rf ./bin
 rm -rf temp
