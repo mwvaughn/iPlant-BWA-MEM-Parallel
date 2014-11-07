@@ -11,3 +11,4 @@ Eric Dawson
 3. Optional Arguments
 4. Test on cow data
 5. Finish JSON and submit to Agave
+6. Handle zipped files automatically (test if zipped and unzip)

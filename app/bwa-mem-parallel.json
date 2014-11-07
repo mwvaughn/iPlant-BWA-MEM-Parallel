@@ -22,7 +22,7 @@
     {
       "id": "infile",
       "details": {
-      	"label": "FASTQ/FASTQ Input File",
+      	"label": "FASTA/FASTQ Input File",
         "description": "Input file to split.",
         "argument": null,
         "showArgument": false
@@ -33,6 +33,23 @@
       },
       "value": {
         "required": true,
+        "visible": true
+      }
+    },
+    {
+      "id": "mates",
+      "details": {
+      	"label": "FASTA/FASTQ Input File Read Mates",
+        "description":"A file containing the mates of the original reads.",
+        "argument": null,
+        "showArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "ontology": []
+      },
+      "value": {
+        "required": false,
         "visible": true
       }
     },

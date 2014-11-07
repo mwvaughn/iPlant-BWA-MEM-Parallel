@@ -29,6 +29,10 @@ THREADS=4
 ## Split the input file into smaller files
 python ./bin/split.py -i ${INFILE} -r ${RECORDS}
 
+## If there are paired ends, split them as well
+## Needs to rename/relabel splits to make sure they don't overlap
+## python ./bin/split.py -i ${MATES} -r ${RECORDS}
+
 
 
 ## Build up the ARGS string to pass to BWA based on user input
